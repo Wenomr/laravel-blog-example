@@ -75,10 +75,11 @@ class PostController extends Controller
     {   
         $post = BlogPost::findOrFail($id);
 
-        if (Gate::denies('update-post', $post)) {
-            abort(403, "You can't edit this blog post");
-        }
-        
+        // if (Gate::denies('update-post', $post)) {
+        //     abort(403, "You can't edit this blog post");
+        // }
+        $this->authorize('update-post', $post);
+
         return view('posts.edit', ['post' => $post]);
     }
 
@@ -93,9 +94,7 @@ class PostController extends Controller
     {   
         $post = BlogPost::findOrFail($id);
         
-        if (Gate::denies('update-post', $post)) {
-            abort(403, "You can't edit this blog post");
-        }
+        $this->authorize('update-post', $post);
 
         $validatedData = $request->validated();
 
@@ -115,6 +114,9 @@ class PostController extends Controller
     public function destroy(Request $request, $id)
     {
         $post = BlogPost::findOrFail($id);
+
+        $this->authorize('delete-post', $post);
+
         $post->delete();
 
         // BlogPost::destroy($id);
